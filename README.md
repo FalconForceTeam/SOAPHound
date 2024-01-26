@@ -1,3 +1,5 @@
+![logo](soaphound-logo.png)
+
 # Description
 
 SOAPHound is a .NET data collector tool, which collects Active Directory data via the Active Directory Web Services (ADWS) protocol.
@@ -6,7 +8,7 @@ SOAPHound is an alternative to a number of open source security tools which are 
 
 Note that this is a proof of concept tool and is not intended for production use. The tool is provided as is, without warranty of any kind.
 
-For additional details on the SOAPHound tool, please refer to the following blog post: TODO.
+For additional details on the SOAPHound tool, please refer to the following blog post: [SOAPHound — tool to collect Active Directory data via ADWS](https://falconforce.nl/soaphound-tool-to-collect-active-directory-data-via-adws/).
 
 # Usage
 
