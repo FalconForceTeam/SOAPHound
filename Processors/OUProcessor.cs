@@ -48,7 +48,7 @@ namespace SOAPHound.Processors
         private GPLink[] parseLinks(string gplink)
         {
             GPLink[] links = new GPLink[] { };
-            if (!gplink.ToUpper().Contains("CN"))
+            if (String.IsNullOrEmpty(gplink)||!gplink.ToUpper().Contains("CN"))
             {
                 return links; // return empty if gplink is invalid
             }
