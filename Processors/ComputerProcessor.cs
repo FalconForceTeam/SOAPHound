@@ -74,7 +74,7 @@ namespace SOAPHound.Processors
             }
             Label objectType = ADWSUtils.ResolveIDAndType(adobject.ObjectSid.ToString()).ObjectType;
 
-            string compName = "UKNOWN";
+            string compName = "UNKNOWN";
             var shortName = adobject.SAMAccountName?.TrimEnd('$');
             var dns = adobject.DNSHostName;
             var cn = adobject.Cn;
