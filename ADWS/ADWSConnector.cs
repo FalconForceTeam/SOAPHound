@@ -14,6 +14,7 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
+using System.Text.RegularExpressions;
 
 namespace SOAPHound.ADWS
 {
