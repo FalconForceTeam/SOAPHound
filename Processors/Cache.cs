@@ -79,13 +79,27 @@ namespace SOAPHound.Processors
 
         internal static void AddConvertedValue(string key, string value)
         {
-            ValueToIdCache.Add(key, value);
+            if (ValueToIdCache.ContainsKey(key))
+            {
+                Console.WriteLine("Duplicate key found with value: " + key);
+            }
+            else
+            {
+                ValueToIdCache.Add(key, value);
+            }
         }
 
    
         internal static void AddType(string key, Label value)
         {
-            IdToTypeCache.Add(key, value);
+            if (IdToTypeCache.ContainsKey(key))
+            {
+                Console.WriteLine("Duplicate key found with value: " + key);
+            }
+            else
+            {
+                IdToTypeCache.Add(key, value);
+            }
         }
 
         internal static bool GetConvertedValue(string key, out string value)
