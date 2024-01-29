@@ -438,6 +438,25 @@ namespace SOAPHound
             }
         }
 
+        private int CountInCache(string searchChar)
+        {
+            var count = 0;
+            foreach (var key in Cache.ValueToIdCache.Keys)
+            {
+
+                if (key.StartsWith("CN=", true, null))
+                {
+                    var sub = key.Substring(3);
+                    if (sub.StartsWith(searchChar, true, null)){
+                        count = count + 1;
+                    }
+
+
+                }
+            }
+            return count;
+        }
+
         private void AutoSplit()
         {
             char firstChar;
@@ -519,19 +538,39 @@ namespace SOAPHound
             }
         }
 
+        private void RecursiveQuerySplit(string prefix, int depth)
+        {
+            if (depth > 100) return; // Prevent going too deep
+
+            var results = CountInCache(prefix);
+            Console.WriteLine("Result count: " + results + " prefix: " + prefix);
+            if (results == 0){
+                return;
+            }
+            if (results < threshold)
+            {
+                List<ADObject> objects = ADWSUtils.GetObjects("(cn=" + prefix + "*)");
+                CreateOutput(objects, prefix);
+                objects.Clear();
+            }
+            else
+            {
+                // If the results are too many, split further
+                foreach (char c in "abcdefghijklmnopqrstuvwxyz0123456789")
+                {
+                    RecursiveQuerySplit(prefix + c, depth + 1); // Go one level deeper
+                }
+            }
+
+        }
+
         private void ParseAutosplitObjects(string str1, string str2)
         {
             foreach (char c1 in str1)
             {
                 if (deep)
                 {
-                    //Gather 2nd depth level 
-                    foreach (char c2 in str2)
-                    {
-                        List<ADObject> objects = ADWSUtils.GetObjects("(cn=" + c1 + c2 + "*)");
-                        CreateOutput(objects, c1.ToString() + c2.ToString());
-                        objects.Clear();
-                    }
+                    RecursiveQuerySplit(c1.ToString(), 1);
                     //Gather non alphanumeric in 2nd depth level
                     List<ADObject> adobjects = ADWSUtils.GetObjects("(&(cn=" + c1 + "*)(!(cn=" + c1 + "a*))(!(cn=" + c1 + "b*))(!(cn=" + c1 + "c*))(!(cn=" + c1 + "d*))(!(cn=" + c1 + "e*))(!(cn=" + c1 + "f*))(!(cn=" + c1 + "g*))(!(cn=" + c1 + "h*))(!(cn=" + c1 + "i*))(!(cn=" + c1 + "j*))(!(cn=" + c1 + "k*))(!(cn=" + c1 + "l*))(!(cn=" + c1 + "m*))(!(cn=" + c1 + "n*))(!(cn=" + c1 + "o*))(!(cn=" + c1 + "p*))(!(cn=" + c1 + "q*))(!(cn=" + c1 + "r*))(!(cn=" + c1 + "s*))(!(cn=" + c1 + "t*))(!(cn=" + c1 + "u*))(!(cn=" + c1 + "v*))(!(cn=" + c1 + "w*))(!(cn=" + c1 + "x*))(!(cn=" + c1 + "y*))(!(cn=" + c1 + "z*))(!(cn=" + c1 + "0*))(!(cn=" + c1 + "1*))(!(cn=" + c1 + "2*))(!(cn=" + c1 + "3*))(!(cn=" + c1 + "4*))(!(cn=" + c1 + "5*))(!(cn=" + c1 + "6*))(!(cn=" + c1 + "7*))(!(cn=" + c1 + "8*))(!(cn=" + c1 + "9*)))");
                     CreateOutput(adobjects, c1.ToString() + "_nonchars_");
@@ -546,6 +585,8 @@ namespace SOAPHound
                 }
             }
         }
+
+  
 
         public void CreateOutput(List<ADObject> adobjects, string header)
         {
