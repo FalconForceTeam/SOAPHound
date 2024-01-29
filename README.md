@@ -15,8 +15,8 @@ For additional details on the SOAPHound tool, please refer to the following blog
 The `--help` command line argument can be used to display the following usage information:
 
 ```
-SOAPHound PoC 1.0.1-beta
-Copyright (c) 2023 FalconForce
+SOAPHound
+Copyright (c) 2024 FalconForce
 
 Connection and authentication options:
   --user                   Username to use for ADWS Connection. Format: domain\user or user@domain
