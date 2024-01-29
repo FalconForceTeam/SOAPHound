@@ -543,7 +543,6 @@ namespace SOAPHound
             if (depth > 100) return; // Prevent going too deep
 
             var results = CountInCache(prefix);
-            Console.WriteLine("Result count: " + results + " prefix: " + prefix);
             if (results == 0){
                 return;
             }
@@ -585,8 +584,6 @@ namespace SOAPHound
                 }
             }
         }
-
-  
 
         public void CreateOutput(List<ADObject> adobjects, string header)
         {
