@@ -319,10 +319,10 @@ namespace SOAPHound.ADWS
                             adobject.GPOptions = int.Parse(propertyValue);
                             break;
                         case "lastLogon":
-                            adobject.LastLogon = DateTime.FromFileTime(long.Parse(propertyValue));
+                            adobject.LastLogon = FromLongToDateTime(long.Parse(propertyValue));
                             break;
                         case "lastLogonTimestamp":
-                            adobject.LastLogonTimestamp = DateTime.FromFileTime(long.Parse(propertyValue));
+                            adobject.LastLogonTimestamp = FromLongToDateTime(long.Parse(propertyValue));
                             break;
                         case "member":
                             adobject.Member = propertyValues;
@@ -373,7 +373,7 @@ namespace SOAPHound.ADWS
                             adobject.PrimaryGroupID = int.Parse(propertyValue);
                             break;
                         case "pwdLastSet":
-                            adobject.PwdLastSet = DateTime.FromFileTime(long.Parse(propertyValue));
+                            adobject.PwdLastSet = FromLongToDateTime(long.Parse(propertyValue));
                             break;
                         case "sAMAccountName":
                             adobject.SAMAccountName = propertyValue;
@@ -454,6 +454,18 @@ namespace SOAPHound.ADWS
             }
 
             return XmlData;
+        }
+
+        private static DateTime FromLongToDateTime(long value)
+        {
+            try
+            {
+                return DateTime.FromFileTime(value);
+            }
+            catch
+            {
+                return DateTime.MinValue;
+            }
         }
     }
 
