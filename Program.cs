@@ -559,62 +559,69 @@ namespace SOAPHound
             OutputContainers outputContainers = new OutputContainers();
 
             foreach (ADObject adobject in adobjects)
-            {
-                if (adobject.Class == "computer")
+            {    
+                try
                 {
-                    ComputerProcessor _comp = new ComputerProcessor();
-                    ComputerNode computerNode = _comp.parseComputerObject(adobject, domainName);
-                    outputComputers.data.Add(computerNode);
+                    if (adobject.Class == "computer")
+                    {
+                        ComputerProcessor _comp = new ComputerProcessor();
+                        ComputerNode computerNode = _comp.parseComputerObject(adobject, domainName);
+                        outputComputers.data.Add(computerNode);
+                    }
+                    else if (adobject.Class == "user")
+                    {
+                        UserProcessor _usr = new UserProcessor();
+                        UserNode userNode = _usr.parseUserObject(adobject, domainName);
+                        outputUsers.data.Add(userNode);
+                    }
+                    else if (adobject.Class == "group")
+                    {
+                        GroupProcessor _grp = new GroupProcessor();
+                        GroupNode groupNode = _grp.parseGroupObject(adobject, domainName);
+                        outputGroups.data.Add(groupNode);
+    
+                    }
+                    else if (adobject.Class == "domaindns" || adobject.Class == "domain")
+                    {
+                        DomainProcessor _dom = new DomainProcessor(Server, Port, Credential);
+                        DomainNode domainNode = _dom.parseDomainObject(adobject);
+                        outputDomains.data.Add(domainNode);
+                    }
+                    else if (adobject.Class == "grouppolicycontainer")
+                    {
+                        GPOProcessor _gpo = new GPOProcessor();
+                        GPONode gpoNode = _gpo.parseGPOObject(adobject, domainName);
+                        outputGPOs.data.Add(gpoNode);
+                    }
+                    else if (adobject.Class == "organizationalunit")
+                    {
+                        OUProcessor _ou = new OUProcessor();
+                        OUNode ouNode = _ou.parseOUObject(adobject, domainName);
+                        outputOUs.data.Add(ouNode);
+                    }
+                    else if (adobject.Class == "container" || adobject.Class == "rpccontainer" || adobject.Class == "msimaging-psps" || adobject.Class == "msExchConfigurationContainer") //todo: add more custom container classes
+                    {
+                        //filter out domainupdates and user/machine system policies
+                        string dn = adobject.DistinguishedName.ToUpper();
+                        if (dn.Contains("CN=DOMAINUPDATES,CN=SYSTEM"))
+                            continue;
+                        if (dn.Contains("CN=POLICIES,CN=SYSTEM") && (dn.StartsWith("CN=USER") || dn.StartsWith("CN=MACHINE")))
+                            continue;
+    
+                        ContainerProcessor _cp = new ContainerProcessor();
+                        ContainerNode containerNode = _cp.parseContainerObject(adobject, domainName);
+                        outputContainers.data.Add(containerNode);
+                    }
+                    else
+                    {
+    
+                        //Trace.WriteLine("we have an unprocessed " + adobject.Class + " object:" + adobject.Name);
+                    }
                 }
-                else if (adobject.Class == "user")
+                catch (Exception e)
                 {
-                    UserProcessor _usr = new UserProcessor();
-                    UserNode userNode = _usr.parseUserObject(adobject, domainName);
-                    outputUsers.data.Add(userNode);
-                }
-                else if (adobject.Class == "group")
-                {
-                    GroupProcessor _grp = new GroupProcessor();
-                    GroupNode groupNode = _grp.parseGroupObject(adobject, domainName);
-                    outputGroups.data.Add(groupNode);
-
-                }
-                else if (adobject.Class == "domaindns" || adobject.Class == "domain")
-                {
-                    DomainProcessor _dom = new DomainProcessor(Server, Port, Credential);
-                    DomainNode domainNode = _dom.parseDomainObject(adobject);
-                    outputDomains.data.Add(domainNode);
-                }
-                else if (adobject.Class == "grouppolicycontainer")
-                {
-                    GPOProcessor _gpo = new GPOProcessor();
-                    GPONode gpoNode = _gpo.parseGPOObject(adobject, domainName);
-                    outputGPOs.data.Add(gpoNode);
-                }
-                else if (adobject.Class == "organizationalunit")
-                {
-                    OUProcessor _ou = new OUProcessor();
-                    OUNode ouNode = _ou.parseOUObject(adobject, domainName);
-                    outputOUs.data.Add(ouNode);
-                }
-                else if (adobject.Class == "container" || adobject.Class == "rpccontainer" || adobject.Class == "msimaging-psps" || adobject.Class == "msExchConfigurationContainer") //todo: add more custom container classes
-                {
-                    //filter out domainupdates and user/machine system policies
-                    string dn = adobject.DistinguishedName.ToUpper();
-                    if (dn.Contains("CN=DOMAINUPDATES,CN=SYSTEM"))
-                        continue;
-                    if (dn.Contains("CN=POLICIES,CN=SYSTEM") && (dn.StartsWith("CN=USER") || dn.StartsWith("CN=MACHINE")))
-                        continue;
-
-                    ContainerProcessor _cp = new ContainerProcessor();
-                    ContainerNode containerNode = _cp.parseContainerObject(adobject, domainName);
-                    outputContainers.data.Add(containerNode);
-                }
-                else
-                {
-
-                    //Trace.WriteLine("we have an unprocessed " + adobject.Class + " object:" + adobject.Name);
-                }
+                    DisplayErrorMessage("Exception " + e.ToString() + "\nError parsing object with ObjectGUID :" + adobject.ObjectGUID.ToString());
+                }                
             }
             outputUsers.meta.count = outputUsers.data.Count();
             if (outputUsers.meta.count > 0)
