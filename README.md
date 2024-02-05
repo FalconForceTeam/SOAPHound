@@ -35,7 +35,7 @@ Output options:
   -c, --cachefilename      Filename for the cache file (full path needed)
 
 Splitting options:
-  -a, --autosplit          (Default: false) Enable AutoSplit mode: automatically split object retrieval on two depth levels based on defined trheshold
+  -a, --autosplit          (Default: false) Enable AutoSplit mode: automatically split object retrieval on two depth levels based on defined threshold
   -t, --threshold          (Default: 0) AutoSplit mode: Define split threshold based on number of objects per starting letter
 
 Miscellaneous options:
